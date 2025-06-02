@@ -2,18 +2,20 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+
+const authRoutes = require("./routes/auth");
 const produtosRoutes = require("./routes/produtos");
 const sequelize = require("./config/database");
 
 const app = express();
 
-// Middlewares
+// Middlewares globais
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
-// Rate limit
+// Limite de requisições
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -22,9 +24,10 @@ app.use(
 );
 
 // Rotas
+app.use("/api/auth", authRoutes);
 app.use("/api/produtos", produtosRoutes);
 
-// Teste de conexão
+// Teste de conexão com o banco de dados
 sequelize
   .authenticate()
   .then(() => console.log("Banco de dados conectado com sucesso"))
